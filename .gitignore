@@ -1,0 +1,12 @@
+# Local account settings and generated research artifacts.
+local/
+*.local.json
+*.local.yaml
+*.local.yml
+.env
+.env.*
+*.tar
+*.tar.gz
+*.tgz
+*.zip
+__pycache__/
