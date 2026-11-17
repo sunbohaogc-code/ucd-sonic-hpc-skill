@@ -8,6 +8,14 @@ UCD documents login.ucd.ie and home directories under /home/people/USERNAME. Dis
 
 The user may activate an existing environment manually. Slurm defaults to exporting the submission environment. For that setup, use #!/bin/bash unless a login shell is needed, because login startup files can alter PATH. Invoke the selected interpreter and log its path and framework-visible resources on the compute node. GPU-required jobs should fail early if the selected framework cannot use a GPU. CPU jobs should exercise their CPU path. If batch activation is requested, UCD documents loading an Anaconda module and activating the chosen environment. Use the user's actual Sonic names.
 
+## Login nodes and compute jobs
+
+Use Sonic login nodes only for Slurm submission, monitoring, resource queries, and cancellation (sbatch, squeue, sacct, scontrol, sinfo, scancel), tar extraction and sha256sum checks of uploaded packages, and small file operations such as ls, mkdir, rm, and viewing logs. Run all computation on compute nodes inside Slurm jobs: training, preprocessing, selection, scoring, and every Python invocation, however small, including python -c and interpreter or import checks.
+
+Apply this boundary to launchers, runbooks, fallback paths, resume instructions, and result retrieval. Wrap short standalone steps in short shared-partition jobs. Run remote result collection scripts and archive creation inside a job as well; collect finalized Slurm logs after the producing job ends. Keep local-machine Python commands explicitly labeled as local.
+
+For a script that both computes and submits jobs, enforce the compute branch inside a Slurm job, for example with a SLURM_JOB_ID guard. Outside a job, allow only the sbatch submission branch. Use a shell submission entry point if the existing dispatcher is Python, so starting the dispatcher does not itself invoke Python on a login node.
+
 ## Slurm and notification settings
 
 For one Python process, request one task and select CPUs per task, host RAM, GPUs if needed, and walltime for the workload. --mem requests host RAM. GPU VRAM must meet the task's requirement independently. Create log parent directories before sbatch and use %j in log filenames. Slurm parses #SBATCH directives before executing the shell. Use literal directive values or expand shell variables in submission arguments.
